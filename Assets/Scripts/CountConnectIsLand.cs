@@ -15,12 +15,14 @@ public class CountConnectIsLand
     //Đây là mảng 2 chiều ban đầu
     public static int[][] grid = new int[][]
     {
-        new int[] { 0, 0, 1, 1, 0 },
-        new int[] { 0, 0, 1, 1, 0 },
-        new int[] { 1, 0, 0, 0, 0 },
+        new int[] { 0, 0, 1, 1, 1 },
         new int[] { 1, 1, 0, 0, 0 },
-        new int[] { 1, 1, 0, 0, 0 }
+        new int[] { 0, 0, 0, 0, 0 },
+        new int[] { 1, 0, 0, 0, 0 },
+        new int[] { 1, 1, 1, 0, 0 }
     };
+
+
     public static void Count()
     {
         IslandCount(grid);
@@ -35,6 +37,7 @@ public class CountConnectIsLand
             Debug.Log(tmp);
         }
     }
+
 
     /// <summary>
     /// Hàm này đếm Island.
@@ -135,34 +138,27 @@ public class CountConnectIsLand
     /// </summary>
     public static void MoveDown()
     {
-        //Sắp xếp lại từng ô trong Island.
-        //Ô nào thấp hơn thì cho lên đầu danh sách để di chuyển trước.
-
-        //foreach (var innerList in listArrayPair)
-        //{
-        //    // Sắp xếp tăng dần theo phần tử đầu tiên
-        //    innerList.Sort((a, b) => b.Item1.CompareTo(a.Item1)); 
-        //}
-
-
-        foreach (var innerList in listArrayPair)
+        for(int i = 0; i < listArrayPair.Count; i++)
         {
             //Nếu có ô nào đang ở dưới cùng rồi thì không thể di chuyển xuống dưới được nữa.
-            bool hasItemWithFirstValue4 = innerList.Any(pair => pair.Item1 == 4);
+            bool hasItemWithFirstValue4 = listArrayPair[i].Any(pair => pair.Item1 == 4);
             //Nếu vẫn có thể di chuyển xuống dưới.
-            if(!hasItemWithFirstValue4)
+            if (!hasItemWithFirstValue4)
             {
-                //Nếu Island này không có ô nào đang nằm trên lưng con sâu.
-                if(!HasWorm(innerList)) {
-                    foreach (var (row, col) in innerList)
+                if (!HasWorm(listArrayPair[i]))
+                {
+                    for (int j = 0; j < listArrayPair[i].Count; j++)
                     {
-                        int newRow = row + 1;
-                        Debug.Log($"({row}:{col + 1})");
+
+                        int newRow = listArrayPair[i][j].Item1 + 1;
+                        int col = listArrayPair[i][j].Item2;
+                        Debug.Log($"({listArrayPair[i][j].Item1}:{col + 1})");
                         if (newRow < 5)
                         {
-                            grid[row][col] = 0;
+                            grid[newRow-1][col] = 0;
                             grid[newRow][col] = 1;
                         }
+                        listArrayPair[i][j] = (newRow,col);
                     }
                 }
                 //Nếu nằm trên lưng con sâu thì không di chuyển xuống được.
@@ -170,7 +166,6 @@ public class CountConnectIsLand
                 {
                     Debug.Log("<color=Yellow>Error:</color> Nằm trên con sâu");
                 }
-                
             }
             //Nếu k thể di chuyển xuống dưới.
             else
@@ -178,7 +173,43 @@ public class CountConnectIsLand
                 Debug.Log("<color=red>Error:</color> khong down duoc nua");
             }
         }
-        IslandCount(grid);
+
+
+        //foreach (var innerList in listArrayPair)
+        //{
+        //    //Nếu có ô nào đang ở dưới cùng rồi thì không thể di chuyển xuống dưới được nữa.
+        //    bool hasItemWithFirstValue4 = innerList.Any(pair => pair.Item1 == 4);
+        //    //Nếu vẫn có thể di chuyển xuống dưới.
+        //    if(!hasItemWithFirstValue4)
+        //    {
+        //        //Nếu Island này không có ô nào đang nằm trên lưng con sâu.
+        //        if(!HasWorm(innerList)) {
+        //            //Di chuyển tất cả phần tử xuống 1 đơn vị.
+        //            foreach (var (row, col) in innerList)
+        //            {
+        //                int newRow = row + 1;
+        //                Debug.Log($"({row}:{col + 1})");
+        //                if (newRow < 5)
+        //                {
+        //                    grid[row][col] = 0;
+        //                    grid[newRow][col] = 1;
+        //                }
+        //            }
+        //        }
+        //        //Nếu nằm trên lưng con sâu thì không di chuyển xuống được.
+        //        else
+        //        {
+        //            Debug.Log("<color=Yellow>Error:</color> Nằm trên con sâu");
+        //        }
+                
+        //    }
+        //    //Nếu k thể di chuyển xuống dưới.
+        //    else
+        //    {
+        //        Debug.Log("<color=red>Error:</color> khong down duoc nua");
+        //    }
+        //}
+        //IslandCount(grid);
     }
 
 
@@ -189,12 +220,17 @@ public class CountConnectIsLand
     /// <returns></returns>
     public static bool HasWorm(List<(int, int)> innerList)
     {
+        // Bước 1: Tìm giá trị nhỏ nhất của Item1
+        int maxValue = innerList.Max(item => item.Item1);
+
+        // Bước 2: Lấy tất cả các phần tử có Item1 bằng minValue
+        var minElements = innerList.Where(item => item.Item1 == maxValue).ToList();
         //Duyệt qua tất cả danh sách nếu có một ô trong Island đang nằm trên con sâu.
         //Nằm trên tức là ô bên dưới nó bằng 2.
-        foreach (var (row, col) in innerList)
+        foreach (var (row, col) in minElements)
         {
             int newRow = row + 1;
-            if(grid[newRow][col] == 2)
+            if(grid[newRow][col] == 2 || grid[newRow][col] == 1)
             {
                 return true;
             }

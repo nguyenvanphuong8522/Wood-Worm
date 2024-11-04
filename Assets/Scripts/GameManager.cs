@@ -11,18 +11,18 @@ public class ListGameObject
     public List<GameObject> list;
 }
 
-public class IslandManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private List<ListGameObject> list;
 
+    private void Start()
+    {
+        CountConnectIsLand.Count();
+    }
+
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.S))
-        {
-            CountConnectIsLand.Count();
-        }
-
         if(Input.GetKeyDown(KeyCode.Space))
         {
             CountConnectIsLand.MoveDown();
