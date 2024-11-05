@@ -1,25 +1,43 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-// Island = Island.
+// Island = Thành phần liên thông.
+
+public class Island
+{
+    public int max;
+    public bool canMove;
+    public List<(int, int)> listCell;
+
+    public Island()
+    {
+        listCell = new List<(int, int)>();
+        canMove = true;
+    }
+
+    public int Count
+    {
+        get => listCell.Count;
+    }
+}
 public class CountConnectIsLand
 {
     //List Island.
     //Mỗi Island bao gồm nhiều ô nhỏ.
     //Mỗi ô nhỏ chính là chỉ số hàng và chỉ số cột.
-    public static List<List<(int, int)>> listArrayPair = new List<List<(int, int)>>();
+    public static List<Island> listIsland = new List<Island>();
+
+    public static bool canMoveDown = true;
 
     //Đây là mảng 2 chiều ban đầu
     public static int[][] grid = new int[][]
     {
-        new int[] { 0, 0, 1, 1, 1 },
-        new int[] { 1, 1, 0, 0, 0 },
+        new int[] { 0, 0, 0, 0, 1 },
         new int[] { 0, 0, 0, 0, 0 },
-        new int[] { 1, 0, 0, 0, 0 },
-        new int[] { 1, 1, 1, 0, 0 }
+        new int[] { 0, 0, 0, 0, 2 },
+        new int[] { 0, 0, 0, 0, 0 },
+        new int[] { 1, 1, 1, 0, 1 }
     };
 
 
@@ -27,10 +45,10 @@ public class CountConnectIsLand
     {
         IslandCount(grid);
 
-        foreach (var arrayPair in listArrayPair)
+        foreach (var arrayPair in listIsland)
         {
             string tmp = null;
-            foreach (var pair in arrayPair)
+            foreach (var pair in arrayPair.listCell)
             {
                 tmp += pair;
             }
@@ -45,8 +63,9 @@ public class CountConnectIsLand
     /// <param name="grid"></param>
     public static void IslandCount(int[][] grid)
     {
+        canMoveDown = true;
         //Mỗi lần tìm sẽ xóa list Island cũ đi.
-        listArrayPair.Clear();
+        listIsland.Clear();
         //Danh sách những ô trên grid đã thăm.
         //Cái nào đã thăm rồi thì bỏ qua.
         var visited = new HashSet<string>();
@@ -90,9 +109,9 @@ public class CountConnectIsLand
         // Sử dụng ngăn xếp để duyệt DFS
         var stack = new Stack<(int, int)>();
         //Tạo một cái đảo mới
-        List<(int, int)> listPair = new List<(int, int)>();
+        Island newIsland = new Island();
         //Thêm một ô đất vào đảo.
-        listPair.Add((startRow, startCol));
+        newIsland.listCell.Add((startRow, startCol));
         stack.Push((startRow, startCol));
         //Đánh dấu là đã thăm.
         visited.Add(startPos);
@@ -123,119 +142,106 @@ public class CountConnectIsLand
                         visited.Add(pos);
                         stack.Push((newRow, newCol));
                         //Thêm một ô đất vào đảo.
-                        listPair.Add((newRow, newCol));
+                        newIsland.listCell.Add((newRow, newCol));
                     }
                 }
             }
         }
-        listPair.Sort((a, b) => b.Item1.CompareTo(a.Item1));
+        newIsland.listCell.Sort((a, b) => b.Item1.CompareTo(a.Item1));
         //Thêm đảo mới vào danh sách các đảo.
-        listArrayPair.Add(listPair);
+        listIsland.Add(newIsland);
     }
 
+
+    /// <summary>
+    /// Hàm này sẽ di chuyển island tức ô một đến khi nào không di chuyển được nữa thì thôi.
+    /// </summary>
+    public static void MoveDownLoop()
+    {
+        while (canMoveDown)
+        {
+            MoveDownMultiIsland();
+        }
+        Debug.Log("Move finished");
+    }
     /// <summary>
     /// Hàm này để di chuyển island xuống dưới nếu có thể.
     /// </summary>
-    public static void MoveDown()
+    public static void MoveDownMultiIsland()
     {
-        for(int i = 0; i < listArrayPair.Count; i++)
+        int numberCanMove = 0;
+        for (int i = 0; i < listIsland.Count; i++)
         {
-            //Nếu có ô nào đang ở dưới cùng rồi thì không thể di chuyển xuống dưới được nữa.
-            bool hasItemWithFirstValue4 = listArrayPair[i].Any(pair => pair.Item1 == 4);
+            var island = listIsland[i];
             //Nếu vẫn có thể di chuyển xuống dưới.
-            if (!hasItemWithFirstValue4)
+            if (CanMoveDown(island))
             {
-                if (!HasWorm(listArrayPair[i]))
-                {
-                    for (int j = 0; j < listArrayPair[i].Count; j++)
-                    {
-
-                        int newRow = listArrayPair[i][j].Item1 + 1;
-                        int col = listArrayPair[i][j].Item2;
-                        Debug.Log($"({listArrayPair[i][j].Item1}:{col + 1})");
-                        if (newRow < 5)
-                        {
-                            grid[newRow-1][col] = 0;
-                            grid[newRow][col] = 1;
-                        }
-                        listArrayPair[i][j] = (newRow,col);
-                    }
-                }
-                //Nếu nằm trên lưng con sâu thì không di chuyển xuống được.
-                else
-                {
-                    Debug.Log("<color=Yellow>Error:</color> Nằm trên con sâu");
-                }
+                numberCanMove++;
+                MoveDownSingleIsland(island);
             }
-            //Nếu k thể di chuyển xuống dưới.
+            //Nếu nằm trên lưng con sâu thì không di chuyển xuống được.
             else
             {
-                Debug.Log("<color=red>Error:</color> khong down duoc nua");
+                Debug.Log($"<color=Yellow>Error:</color> Không thể di chuyển đảo ở vị trí {i} xuống được nữa.");
             }
         }
+        if(numberCanMove == 0)
+        {
+            canMoveDown = false;
+        }
+    }
 
+    private static void MoveDownSingleIsland(Island island)
+    {
+        foreach (var (row, col) in island.listCell)
+        {
+            int newRow = row + 1;
 
-        //foreach (var innerList in listArrayPair)
-        //{
-        //    //Nếu có ô nào đang ở dưới cùng rồi thì không thể di chuyển xuống dưới được nữa.
-        //    bool hasItemWithFirstValue4 = innerList.Any(pair => pair.Item1 == 4);
-        //    //Nếu vẫn có thể di chuyển xuống dưới.
-        //    if(!hasItemWithFirstValue4)
-        //    {
-        //        //Nếu Island này không có ô nào đang nằm trên lưng con sâu.
-        //        if(!HasWorm(innerList)) {
-        //            //Di chuyển tất cả phần tử xuống 1 đơn vị.
-        //            foreach (var (row, col) in innerList)
-        //            {
-        //                int newRow = row + 1;
-        //                Debug.Log($"({row}:{col + 1})");
-        //                if (newRow < 5)
-        //                {
-        //                    grid[row][col] = 0;
-        //                    grid[newRow][col] = 1;
-        //                }
-        //            }
-        //        }
-        //        //Nếu nằm trên lưng con sâu thì không di chuyển xuống được.
-        //        else
-        //        {
-        //            Debug.Log("<color=Yellow>Error:</color> Nằm trên con sâu");
-        //        }
-                
-        //    }
-        //    //Nếu k thể di chuyển xuống dưới.
-        //    else
-        //    {
-        //        Debug.Log("<color=red>Error:</color> khong down duoc nua");
-        //    }
-        //}
-        //IslandCount(grid);
+            // Log vị trí di chuyển
+            Debug.Log($"<color=Green>Moving:</color> ({row}:{col + 1}) to ({newRow}:{col + 1})");
+
+            // Xóa vị trí cũ và cập nhật vị trí mới trong grid
+            grid[row][col] = 0;
+            grid[newRow][col] = 1;
+        }
+
+        // Cập nhật lại `innerList` với các vị trí mới
+        for (int i = 0; i < island.Count; i++)
+        {
+            island.listCell[i] = (island.listCell[i].Item1 + 1, island.listCell[i].Item2);
+        }
     }
 
 
 
     /// <summary>
-    /// Kiểm tra xem Island đó có nằm trên con sâu không.
+    /// Kiểm tra xem Island đó có thể di chuyển xuống được không.
     /// </summary>
     /// <returns></returns>
-    public static bool HasWorm(List<(int, int)> innerList)
+    public static bool CanMoveDown(Island island)
     {
-        // Bước 1: Tìm giá trị nhỏ nhất của Item1
-        int maxValue = innerList.Max(item => item.Item1);
+        // Bước 1: Tìm giá trị lớn nhất của Item1
+        int maxValue = island.listCell.Max(item => item.Item1);
 
-        // Bước 2: Lấy tất cả các phần tử có Item1 bằng minValue
-        var minElements = innerList.Where(item => item.Item1 == maxValue).ToList();
-        //Duyệt qua tất cả danh sách nếu có một ô trong Island đang nằm trên con sâu.
-        //Nằm trên tức là ô bên dưới nó bằng 2.
+        // Bước 2: Lấy tập hợp những cái ô ở hàng dưới cùng của cái đảo đấy.
+        // Sau đó sẽ kiểm tra những cái ô trong cái hàng đấy xem có cái ô nào bên dưới khác 0 không
+        // nếu khác 0 tức là
+        // không di chuyển được xuống.
+        var minElements = island.listCell.Where(item => item.Item1 == maxValue).ToList();
+
         foreach (var (row, col) in minElements)
         {
-            int newRow = row + 1;
-            if(grid[newRow][col] == 2 || grid[newRow][col] == 1)
+            //Nếu có ô nào đang ở dưới cùng rồi thì không thể di chuyển xuống dưới được nữa.
+            if (row == 4)
             {
-                return true;
+                return false;
+            }
+
+            if (grid[row + 1][col] != 0)
+            {
+                return false;
             }
         }
-        return false;
+        return true;
     }
-
 }

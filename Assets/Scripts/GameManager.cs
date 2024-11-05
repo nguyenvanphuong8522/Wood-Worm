@@ -25,7 +25,8 @@ public class GameManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            CountConnectIsLand.MoveDown();
+            CountConnectIsLand.MoveDownLoop();
         }
+
     }
 }
