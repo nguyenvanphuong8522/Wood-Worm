@@ -33,11 +33,11 @@ public class CountConnectIsLand
     //Đây là mảng 2 chiều ban đầu
     public static int[][] grid = new int[][]
     {
-        new int[] { 0, 0, 0, 0, 1 },
-        new int[] { 0, 0, 0, 0, 0 },
-        new int[] { 0, 0, 0, 0, 2 },
-        new int[] { 0, 0, 0, 0, 0 },
-        new int[] { 1, 1, 1, 0, 1 }
+        new int[] { 1, 1, 1, 1, 1 },
+        new int[] { 1, 1, 1, 1, 1 },
+        new int[] { 1, 1, 1, 1, 1 },
+        new int[] { 1, 1, 1, 1, 1 },
+        new int[] { 1, 1, 1, 1, 1 }
     };
 
 
@@ -45,6 +45,11 @@ public class CountConnectIsLand
     {
         IslandCount(grid);
 
+    }
+
+    //Show danh sách Island.
+    public static void LogIsland()
+    {
         foreach (var arrayPair in listIsland)
         {
             string tmp = null;
@@ -58,7 +63,7 @@ public class CountConnectIsLand
 
 
     /// <summary>
-    /// Hàm này đếm Island.
+    /// Hàm này đếm thành phần liên thông và lưu 1 thành phần liên thông là 1 list.
     /// </summary>
     /// <param name="grid"></param>
     public static void IslandCount(int[][] grid)
@@ -154,29 +159,30 @@ public class CountConnectIsLand
 
 
     /// <summary>
-    /// Hàm này sẽ di chuyển island tức ô một đến khi nào không di chuyển được nữa thì thôi.
+    /// Hàm này sẽ di chuyển island từng ô một đến khi nào không di chuyển được nữa thì thôi.
     /// </summary>
     public static void MoveDownLoop()
     {
-        while (canMoveDown)
+        int count = 10;
+        while (count > 0)
         {
             MoveDownMultiIsland();
+            count--;
         }
+        Count();
         Debug.Log("Move finished");
     }
     /// <summary>
-    /// Hàm này để di chuyển island xuống dưới nếu có thể.
+    /// Mỗi lần gọi hàm này sẽ di chuyển tất cả các đảo xuống một hàng.
     /// </summary>
     public static void MoveDownMultiIsland()
     {
-        int numberCanMove = 0;
         for (int i = 0; i < listIsland.Count; i++)
         {
             var island = listIsland[i];
             //Nếu vẫn có thể di chuyển xuống dưới.
             if (CanMoveDown(island))
             {
-                numberCanMove++;
                 MoveDownSingleIsland(island);
             }
             //Nếu nằm trên lưng con sâu thì không di chuyển xuống được.
@@ -185,23 +191,23 @@ public class CountConnectIsLand
                 Debug.Log($"<color=Yellow>Error:</color> Không thể di chuyển đảo ở vị trí {i} xuống được nữa.");
             }
         }
-        if(numberCanMove == 0)
-        {
-            canMoveDown = false;
-        }
     }
 
+    //Di chuyển một cái đảo xuống dưới 1 hàng.
+    // Để di chuyển cả cái đảo xuống một hàng thì sẽ di chuyển từng phần tử 1 xuống dưới 1 hàng.
     private static void MoveDownSingleIsland(Island island)
     {
         foreach (var (row, col) in island.listCell)
         {
+            //Lấy index hiện tại cộng thêm một đơn vị.
             int newRow = row + 1;
 
             // Log vị trí di chuyển
             Debug.Log($"<color=Green>Moving:</color> ({row}:{col + 1}) to ({newRow}:{col + 1})");
 
-            // Xóa vị trí cũ và cập nhật vị trí mới trong grid
+            // gán cái ô ban đầu bằng 0.
             grid[row][col] = 0;
+            // gán cái ô bên dưới ô ban đầu bằng 1.
             grid[newRow][col] = 1;
         }
 
@@ -227,7 +233,7 @@ public class CountConnectIsLand
         // Sau đó sẽ kiểm tra những cái ô trong cái hàng đấy xem có cái ô nào bên dưới khác 0 không
         // nếu khác 0 tức là
         // không di chuyển được xuống.
-        var minElements = island.listCell.Where(item => item.Item1 == maxValue).ToList();
+        var minElements = island.listCell.ToList();
 
         foreach (var (row, col) in minElements)
         {
@@ -237,11 +243,13 @@ public class CountConnectIsLand
                 return false;
             }
 
-            if (grid[row + 1][col] != 0)
+            if (grid[row + 1][col] != 0 && !minElements.Contains((row+1, col)))
             {
                 return false;
             }
         }
         return true;
     }
+
+
 }
