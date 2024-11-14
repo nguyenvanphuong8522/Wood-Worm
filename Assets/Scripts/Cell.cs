@@ -7,19 +7,28 @@ public class Cell : MonoBehaviour
     public int row;
     public int col;
 
+    private SpriteRenderer spriteRenderer;
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
     private void FixedUpdate()
     {
         if (CountConnectIsLand.grid[row][col] == 2)
         {
-            GetComponent<SpriteRenderer>().color = Color.green;
+            spriteRenderer.color = Color.green;
         }
-        else if(CountConnectIsLand.grid[row][col] == 1)
+        else if (CountConnectIsLand.grid[row][col] == 1)
         {
-            GetComponent<SpriteRenderer>().color = Color.gray;
+            spriteRenderer.color = Color.gray;
         }
-        else
+        else if (CountConnectIsLand.grid[row][col] == 3)
         {
-            GetComponent<SpriteRenderer>().color = Color.white;
+            spriteRenderer.color = Color.red;
+        }
+        else 
+        {
+            spriteRenderer.color = Color.white;
         }
     }
 
@@ -28,7 +37,11 @@ public class Cell : MonoBehaviour
         if (Input.GetKey(KeyCode.S))
         {
             CountConnectIsLand.grid[row][col] = 2;
-            CountConnectIsLand.MoveDownLoop();
+            return;
+        }
+        if (Input.GetKey(KeyCode.F))
+        {
+            CountConnectIsLand.grid[row][col] = 3;
             return;
         }
         if (Input.GetKey(KeyCode.D))
@@ -38,10 +51,6 @@ public class Cell : MonoBehaviour
         else
         {
             CountConnectIsLand.grid[row][col] = 0;
-
-            CountConnectIsLand.Count();
-            //Di chuyển các hòn đảo xuống thấp nhất có thể.
-            CountConnectIsLand.MoveDownLoop();
         }
         
     }

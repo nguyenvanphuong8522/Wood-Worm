@@ -96,9 +96,7 @@ public class CountConnectIsLand
     private static void Explore(int[][] grid, int startRow, int startCol, HashSet<string> visited)
     {
         //Nếu lớn hơn kích thước mảng hoặc vị trí đó bằng 0 thì return false luôn.
-        if (grid[startRow][startCol] == 0) return;
-        //Số 2 là vị trí mà cơ thể con sâu đang nằm trên đó.
-        if (grid[startRow][startCol] == 2) return;
+        if (grid[startRow][startCol] != 1) return;
 
         //Kiểm tra xem hàng và cột có lớn hơn kích thước của mảng không.
         bool rowInbounds = 0 <= startRow && startRow < grid.Length;
@@ -207,8 +205,18 @@ public class CountConnectIsLand
 
             // gán cái ô ban đầu bằng 0.
             grid[row][col] = 0;
-            // gán cái ô bên dưới ô ban đầu bằng 1.
-            grid[newRow][col] = 1;
+            if(grid[newRow][col] == 3)
+            {
+                Count();
+                MoveDownLoop();
+                return;
+            }
+            else
+            {
+                // gán cái ô bên dưới ô ban đầu bằng 1.
+                grid[newRow][col] = 1;
+            }
+            
         }
 
         // Cập nhật lại `innerList` với các vị trí mới
@@ -245,7 +253,10 @@ public class CountConnectIsLand
 
             if (grid[row + 1][col] != 0 && !minElements.Contains((row+1, col)))
             {
-                return false;
+                if(grid[row + 1][col] != 3)
+                {
+                    return false;
+                }
             }
         }
         return true;
