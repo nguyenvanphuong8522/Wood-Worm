@@ -78,7 +78,7 @@ public class ObjectPool : Singleton<ObjectPool>
     public Pool effectDollar;
 
     public Pool gate;
-    protected override void Awake()
+    public override void Awake()
     {
         pools.Add(gate);
         pools.Add(effectDollar);

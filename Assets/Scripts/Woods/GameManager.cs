@@ -1,16 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
     public NodeManager nodeManager;
 
-    public static GameManager instance;
-
-    private void Awake()
-    {
-        instance = this;
-    }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space)) ReFindIsland();

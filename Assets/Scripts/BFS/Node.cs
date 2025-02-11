@@ -38,7 +38,7 @@ public class Node : MonoBehaviour
     //Destroy cell.
     private void DestroyCell()
     {
-        GameManager.instance.nodeManager.RemoveNode(pos);
+        GameManager.Instance.nodeManager.RemoveNode(pos);
         if(transform.parent.childCount == 1)
         {
             Destroy(transform.parent.gameObject);

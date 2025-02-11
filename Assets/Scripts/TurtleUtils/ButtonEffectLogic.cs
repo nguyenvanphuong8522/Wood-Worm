@@ -76,7 +76,7 @@ public class ButtonEffectLogic : Button
 
     public virtual void EffectUp()
     {
-        AudioManager.instance.PlayShot(AudioManager.instance.btn[0]);
+        AudioManager.Instance.PlayShot(AudioManager.Instance.btn[0]);
         ScaleDown();
     }
 

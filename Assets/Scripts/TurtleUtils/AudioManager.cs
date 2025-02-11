@@ -13,7 +13,7 @@ public class AudioManager : Singleton<AudioManager>
     public AudioClip[] gunShoots;
     public AudioClip[] btn;
 
-    protected override void Awake()
+    public override void Awake()
     {
         base.Awake();
         _queueSources = new Queue<AudioSource>(soundSources);

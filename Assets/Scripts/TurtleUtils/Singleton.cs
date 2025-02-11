@@ -1,27 +1,48 @@
 using UnityEngine;
 
-public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+public class Singleton<T> : MonoBehaviour where T : Component
 {
-    public static T instance;
-    protected virtual void Awake()
+    private static T instance;
+    public static T Instance
     {
-        instance = this as T;
+        get
+        {
+            if (instance == null)
+            {
+                instance = (T)FindObjectOfType(typeof(T));
+                if (instance == null)
+                {
+                    SetupInstance();
+                }
+            }
+            return instance;
+        }
     }
-    protected virtual void OnApplicationQuit()
+    public virtual void Awake()
     {
-        instance = null;
-        Destroy(gameObject);
+        RemoveDuplicates();
     }
-}
-public abstract class SingletonDontdestroy<T> : Singleton<T> where T : MonoBehaviour
-{
-    protected override void Awake()
+    private static void SetupInstance()
     {
-        if(instance != null)
+        instance = (T)FindObjectOfType(typeof(T));
+        if (instance == null)
+        {
+            GameObject gameObj = new GameObject();
+            gameObj.name = typeof(T).Name;
+            instance = gameObj.AddComponent<T>();
+            DontDestroyOnLoad(gameObj);
+        }
+    }
+    private void RemoveDuplicates()
+    {
+        if (instance == null)
+        {
+            instance = this as T;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
         {
             Destroy(gameObject);
         }
-        DontDestroyOnLoad(gameObject);
-        base.Awake();
     }
 }
