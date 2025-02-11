@@ -9,15 +9,12 @@ public class Node : MonoBehaviour
 
     public List<Node> neighbors = new List<Node>();
 
-    private void Start()
-    {
-        UpdateRowAndCol();
-    }
-
     private void OnMouseDown()
     {
         DestroyCell();
     }
+
+
 
     /// <summary>
     /// Hàm này setup row và col, dựa theo vị trí.
@@ -37,6 +34,7 @@ public class Node : MonoBehaviour
         GetComponent<SpriteRenderer>().color = Color.green;
     }
 
+
     //Destroy cell.
     private void DestroyCell()
     {
@@ -49,10 +47,10 @@ public class Node : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnDisable()
-    {
-        DestroyCell();
-    }
+    /// <summary>
+    /// Hàm này setparent cho node.
+    /// </summary>
+    /// <param name="parent"></param>
     public void AddToParent(Transform parent)
     {
         transform.SetParent(parent);

@@ -4,10 +4,20 @@ using UnityEngine;
 public class NodeManager : MonoBehaviour
 {
     public Dictionary<Vector2Int, Node> dictionaryNode;
-
+    //Danh sách tất cả node.
     public List<Node> listOfNode;
 
     private void Awake()
+    {
+        GetNodeIntoList();
+        dictionaryNode = new Dictionary<Vector2Int, Node>();
+        InitializeNodeConnections();
+    }
+
+    /// <summary>
+    /// Hàm này lấy tất cả node vào list.
+    /// </summary>
+    private void GetNodeIntoList()
     {
         foreach (Transform child in transform)
         {
@@ -18,8 +28,6 @@ public class NodeManager : MonoBehaviour
                 listOfNode.Add(node);
             }
         }
-        dictionaryNode = new Dictionary<Vector2Int, Node>();
-        InitializeNodeConnections();
     }
 
 
@@ -47,7 +55,7 @@ public class NodeManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Lấy những node hàng xóm của một node
+    /// Lấy tất cả node hàng xóm của một node.
     /// </summary>
     private List<Node> GetNeighbors(Vector2Int gridPosition)
     {
@@ -73,7 +81,7 @@ public class NodeManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Hàm này xóa một node khỏi dictionary.
+    /// Hàm này xóa một node.
     /// </summary>
     /// <param name="gridPosition"></param>
     public void RemoveNode(Vector2Int gridPosition)
@@ -84,15 +92,14 @@ public class NodeManager : MonoBehaviour
 
 
     /// <summary>
-    /// Lấy node từ vị trí trên lưới.
+    /// Lấy một node thông qua tham số là vị trí node.
     /// </summary>
-    /// <param name="gridPosition">Vị trí cần kiểm tra.</param>
-    /// <returns>Node tại vị trí chỉ định. Trả về null nếu không tồn tại.</returns>
     private Node GetNode(Vector2Int gridPosition)
     {
         dictionaryNode.TryGetValue(gridPosition, out Node node);
         return node;
     }
+
 
     /// <summary>
     /// Đưa node vào trong dictionary với key là pos của node.
@@ -113,13 +120,18 @@ public class NodeManager : MonoBehaviour
         }
     }
 
-    //Hàm này cập nhật lại vị trí của node hiện tại.
+
+    /// <summary>
+    /// Hàm này cập nhật lại vị trí của node hiện tại.
+    /// </summary>
     private void UpdatePosAllNode()
     {
         foreach (Node node in listOfNode)
         {
-            if (node == null) continue;
-            node.UpdateRowAndCol();
+            if (node != null)
+            {
+                node.UpdateRowAndCol();
+            }
         }
     }
 }
