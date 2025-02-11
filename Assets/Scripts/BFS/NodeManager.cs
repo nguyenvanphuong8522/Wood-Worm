@@ -5,8 +5,19 @@ public class NodeManager : MonoBehaviour
 {
     public Dictionary<Vector2Int, Node> dictionaryNode;
 
+    public List<Node> listOfNode;
+
     private void Awake()
     {
+        foreach (Transform child in transform)
+        {
+            if (child == null) continue;
+
+            if (child.TryGetComponent(out Node node))
+            {
+                listOfNode.Add(node);
+            }
+        }
         dictionaryNode = new Dictionary<Vector2Int, Node>();
         InitializeNodeConnections();
     }
@@ -15,11 +26,11 @@ public class NodeManager : MonoBehaviour
     /// <summary>
     /// Khởi tạo
     /// </summary>
-    private void InitializeNodeConnections()
+    public void InitializeNodeConnections()
     {
         UpdatePosAllNode();
-        SetupNodeNeighbors();
         SetupNodesDictionary();
+        SetupNodeNeighbors();
     }
 
 
@@ -30,6 +41,7 @@ public class NodeManager : MonoBehaviour
     {
         foreach (Vector2Int position in dictionaryNode.Keys)
         {
+            dictionaryNode[position].neighbors.Clear();
             dictionaryNode[position].neighbors = GetNeighbors(position);
         }
     }
@@ -66,6 +78,7 @@ public class NodeManager : MonoBehaviour
     /// <param name="gridPosition"></param>
     public void RemoveNode(Vector2Int gridPosition)
     {
+        listOfNode.Remove(dictionaryNode[gridPosition]);
         dictionaryNode.Remove(gridPosition);
     }
 
@@ -87,32 +100,26 @@ public class NodeManager : MonoBehaviour
     private void SetupNodesDictionary()
     {
         dictionaryNode.Clear();
-        foreach (Transform child in transform)
+        foreach (Node node in listOfNode)
         {
-            if (child == null) continue;
+            if (node == null) continue;
 
-            if (child.TryGetComponent(out Node node))
+            if (dictionaryNode.ContainsKey(node.pos))
             {
-                if (dictionaryNode.ContainsKey(node.pos))
-                {
-                    Debug.LogWarning($"Trùng lặp node tại vị trí {node.pos}", child);
-                    continue;
-                }
-                dictionaryNode.Add(node.pos, node);
+                Debug.LogWarning($"Trùng lặp node tại vị trí {node.pos}", node);
+                continue;
             }
+            dictionaryNode.Add(node.pos, node);
         }
     }
 
+    //Hàm này cập nhật lại vị trí của node hiện tại.
     private void UpdatePosAllNode()
     {
-        foreach (Transform child in transform)
+        foreach (Node node in listOfNode)
         {
-            if (child == null) continue;
-
-            if (child.TryGetComponent(out Node node))
-            {
-                node.UpdateRowAndCol();
-            }
+            if (node == null) continue;
+            node.UpdateRowAndCol();
         }
     }
 }

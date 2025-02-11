@@ -24,8 +24,9 @@ public class Node : MonoBehaviour
     /// </summary>
     public void UpdateRowAndCol()
     {
-        pos.x = (int)transform.localPosition.y;
-        pos.y = (int)transform.localPosition.x;
+        pos.x = Mathf.RoundToInt(transform.localPosition.y);
+        pos.y = Mathf.RoundToInt(transform.localPosition.x);
+        transform.position = new Vector3(pos.y, pos.x, 0);
     }
 
     /// <summary>
@@ -40,6 +41,20 @@ public class Node : MonoBehaviour
     private void DestroyCell()
     {
         GameManager.instance.nodeManager.RemoveNode(pos);
+        if(transform.parent.childCount == 1)
+        {
+            Destroy(transform.parent.gameObject);
+            return;
+        }
         Destroy(gameObject);
+    }
+
+    private void OnDisable()
+    {
+        DestroyCell();
+    }
+    public void AddToParent(Transform parent)
+    {
+        transform.SetParent(parent);
     }
 }
