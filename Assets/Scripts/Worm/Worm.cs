@@ -9,8 +9,8 @@ public class Worm : MonoBehaviour
     [SerializeField]
     private Transform[] _listTail;
 
-    [SerializeField]
-    private Rigidbody2D _rb;
+    //[SerializeField]
+    //private Rigidbody2D _rb;
 
     private void Awake()
     {
@@ -46,7 +46,7 @@ public class Worm : MonoBehaviour
     /// <param name="value"></param>
     private void Move(Vector2 direction)
     {
-        if (_rb.velocity.y < 0) return;
+        //if (_rb.velocity.y < 0) return;
         //Nếu cái hướng di chuyển mà là hướng đi lùi thì return luôn.
         if (_lookDirection == - direction) return;
 

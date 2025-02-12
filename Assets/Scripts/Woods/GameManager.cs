@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Sirenix.OdinInspector;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
@@ -8,13 +10,15 @@ public class GameManager : Singleton<GameManager>
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space)) ReFindIsland();
+        if (Input.GetKeyDown(KeyCode.S)) nodeManager.UpdatePosAllNode();
     }
 
 
     //Tìm lại danh sách island.
+    [Button(ButtonSizes.Gigantic)]
     public void ReFindIsland()
     {
-        //Khởi tại lại vị trí node, hàng xóm node.
+        //Khởi tạo lại vị trí node, hàng xóm node.
         nodeManager.InitializeNodeConnections();
 
         List<NodeGroup> nodeGroups = GetNodeGroup(nodeManager.dictionaryNode);
@@ -71,7 +75,15 @@ public class GameManager : Singleton<GameManager>
             Transform oldParent = nodeGroup.Nodes[0].transform.parent;
             foreach (Node node in nodeGroup.Nodes)
             {
+                Transform oldParentOfThisNode = node.transform.parent;
                 node.AddToParent(newParent);
+                //Xóa nếu parent rỗng.
+                if (oldParentOfThisNode.childCount == 0)
+                {
+                    Destroy(oldParentOfThisNode.gameObject);
+                }
+
+                AddRigidbody2D(newParent);
             }
 
             if (oldParent != nodeManager.transform)
@@ -79,6 +91,20 @@ public class GameManager : Singleton<GameManager>
                 Destroy(oldParent.gameObject, 0.1f);
             }
         }
+    }
 
+
+    /// <summary>
+    /// Add Rigidbody và chỉ cho nó rơi theo trục Y.
+    /// </summary>
+    /// <param name="newParent"></param>
+    private void AddRigidbody2D(Transform newParent)
+    {
+        //Nếu chưa có component rigidbody.
+        if (!newParent.TryGetComponent<Rigidbody2D>(out Rigidbody2D rb))
+        {
+            Rigidbody2D rb2d = newParent.AddComponent<Rigidbody2D>();
+            rb2d.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+        }
     }
 }

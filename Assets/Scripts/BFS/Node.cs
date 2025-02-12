@@ -21,8 +21,8 @@ public class Node : MonoBehaviour
     /// </summary>
     public void UpdateRowAndCol()
     {
-        pos.x = Mathf.RoundToInt(transform.localPosition.y);
-        pos.y = Mathf.RoundToInt(transform.localPosition.x);
+        pos.x = Mathf.RoundToInt(transform.position.y);
+        pos.y = Mathf.RoundToInt(transform.position.x);
         transform.position = new Vector3(pos.y, pos.x, 0);
     }
 

@@ -124,7 +124,7 @@ public class NodeManager : MonoBehaviour
     /// <summary>
     /// Hàm này cập nhật lại vị trí của node hiện tại.
     /// </summary>
-    private void UpdatePosAllNode()
+    public void UpdatePosAllNode()
     {
         foreach (Node node in listOfNode)
         {
