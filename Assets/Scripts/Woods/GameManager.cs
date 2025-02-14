@@ -82,9 +82,8 @@ public class GameManager : Singleton<GameManager>
                 {
                     Destroy(oldParentOfThisNode.gameObject);
                 }
-
-                AddRigidbody2D(newParent);
             }
+            AddIslandComponent(newParent);
 
             if (oldParent != nodeManager.transform)
             {
@@ -98,13 +97,12 @@ public class GameManager : Singleton<GameManager>
     /// Add Rigidbody và chỉ cho nó rơi theo trục Y.
     /// </summary>
     /// <param name="newParent"></param>
-    private void AddRigidbody2D(Transform newParent)
+    private void AddIslandComponent(Transform newParent)
     {
         //Nếu chưa có component rigidbody.
-        if (!newParent.TryGetComponent<Rigidbody2D>(out Rigidbody2D rb))
+        if (!newParent.TryGetComponent(out IslandNode island))
         {
-            Rigidbody2D rb2d = newParent.AddComponent<Rigidbody2D>();
-            rb2d.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+            newParent.AddComponent<IslandNode>();
         }
     }
 }
