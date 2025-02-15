@@ -55,4 +55,17 @@ public class Node : MonoBehaviour
     {
         transform.SetParent(parent);
     }
+
+    /// <summary>
+    /// Hàm này tìm y nhỏ nhất mà ô này có thể di chuyển xuống.
+    /// </summary>
+    /// <returns></returns>
+    private float GetYMin()
+    {
+        //Hàng của node này.
+        int col = pos.y;
+
+        return 0;
+    }
+
 }

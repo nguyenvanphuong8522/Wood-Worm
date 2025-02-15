@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class IslandNode : MonoBehaviour
 {
-
     private void Awake()
     {
         Init();
@@ -13,7 +12,7 @@ public class IslandNode : MonoBehaviour
     public void Init()
     {
         SetPositionAVGChildPosition();
-        AddRigidbody2D();
+        AddGravity();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -24,17 +23,13 @@ public class IslandNode : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Add Rigidbody và chỉ cho nó rơi theo trục Y.
-    /// </summary>
-    /// <param name="newParent"></param>
-    public void AddRigidbody2D()
+
+    private void AddGravity()
     {
-        //Nếu chưa có component rigidbody.
-        if (!transform.TryGetComponent(out Rigidbody2D rb))
+        //Nếu chưa có component GravitySimulator.
+        if (!transform.TryGetComponent(out GravitySimulator gs))
         {
-            Rigidbody2D rb2d = transform.AddComponent<Rigidbody2D>();
-            rb2d.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+            transform.AddComponent<GravitySimulator>();
         }
     }
 
@@ -60,6 +55,14 @@ public class IslandNode : MonoBehaviour
         {
             child.position += offset;  // Điều chỉnh các con về lại vị trí thế giới ban đầu
         }
+    }
 
+    /// <summary>
+    /// Hàm này tìm vị trí thấp nhất có thể di chuyển xuống.
+    /// </summary>
+    private float CalculatorYMin()
+    {
+
+        return 0;
     }
 }

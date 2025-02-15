@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Sirenix.OdinInspector;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class NodeManager : MonoBehaviour
@@ -132,6 +133,61 @@ public class NodeManager : MonoBehaviour
             {
                 node.UpdateRowAndCol();
             }
+        }
+    }
+
+    //Hàm này lấy danh sách những key nằm trên một cột.
+    private List<Vector2Int> GetNodeHasCol(int col)
+    {
+        List<Vector2Int> listOfKey = new List<Vector2Int>();
+        foreach (Vector2Int key in dictionaryNode.Keys)
+        {
+            if (key.y == col)
+            {
+                listOfKey.Add(key);
+            }
+        }
+        return listOfKey;
+    }
+
+
+    //Hàm này tìm node có vị trí thấp nhất trong cột.
+    private Vector2Int GetKeyMin(int col)
+    {
+        List<Vector2Int> listOfKey = GetNodeHasCol(col);
+
+        int min = int.MaxValue;
+
+        for (int i = 0; i < listOfKey.Count; i++)
+        {
+            if (listOfKey[i].x < min)
+            {
+                min = listOfKey[i].x;
+            }
+        }
+        Vector2Int keyNeedFind = new Vector2Int(min, col);
+        return keyNeedFind;
+    }
+
+    [Button(ButtonSizes.Gigantic)]
+    public void Test(Node node)
+    {
+        Debug.Log(GetYMin(node.pos));
+    }
+
+    //Hàm này lấy ra giá trị thấp nhất mà node tại key này có thể di chuyển xuống.
+    private float GetYMin(Vector2Int key)
+    {
+        //Đây là key có y thấp nhất tại cột này.
+        Vector2Int min = GetKeyMin(key.y);
+        //Nếu key là key thấp nhất.
+        if(key == min)
+        {
+            return 0;
+        }
+        else
+        {
+            return min.y;
         }
     }
 }
