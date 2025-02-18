@@ -1,4 +1,4 @@
-﻿using Sirenix.OdinInspector;
+﻿//using Sirenix.OdinInspector;
 using System.Collections;
 using UnityEngine;
 
@@ -31,7 +31,7 @@ public class GravitySimulator : MonoBehaviour
     #endregion
 
 
-    [Button(ButtonSizes.Gigantic)]
+    //[Button(ButtonSizes.Gigantic)]
 
     public void StartFall()
     {

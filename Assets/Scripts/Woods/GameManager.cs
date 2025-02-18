@@ -1,4 +1,4 @@
-﻿using Sirenix.OdinInspector;
+﻿//using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -15,7 +15,7 @@ public class GameManager : Singleton<GameManager>
 
 
     //Tìm lại danh sách island.
-    [Button(ButtonSizes.Gigantic)]
+    //[Button(ButtonSizes.Gigantic)]
     public void ReFindIsland()
     {
         //Khởi tạo lại vị trí node, hàng xóm node.

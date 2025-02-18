@@ -1,4 +1,4 @@
-﻿using Sirenix.OdinInspector;
+﻿//using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -169,7 +169,7 @@ public class NodeManager : MonoBehaviour
         return keyNeedFind;
     }
 
-    [Button(ButtonSizes.Gigantic)]
+    //[Button(ButtonSizes.Gigantic)]
     public void Test(Node node)
     {
         Debug.Log(GetYMin(node.pos));
