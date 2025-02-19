@@ -16,6 +16,8 @@ public class GravitySimulator : MonoBehaviour
     /// <summary>
     /// Giá trị thấp nhất có thể rơi xuống.
     /// </summary>
+    [SerializeField]    
+    
     private int _yMin;
     public int YMin
     {

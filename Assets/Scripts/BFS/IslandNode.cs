@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class IslandNode : MonoBehaviour
 {
+    public NodeGroup nodeGroup;
+
     private void Awake()
     {
         Init();
@@ -13,6 +15,22 @@ public class IslandNode : MonoBehaviour
     {
         SetPositionAVGChildPosition();
         AddGravity();
+        InitNodeGroup();
+        int yMin = GameManager.Instance.nodeManager.GetYMinOfNodeGroup(this);
+        GetComponent<GravitySimulator>().YMin = yMin;
+        GetComponent<GravitySimulator>().StartFall();
+    }
+
+    public void InitNodeGroup()
+    {
+        nodeGroup = new NodeGroup();
+        foreach(Transform child in transform)
+        {
+            if(child.TryGetComponent(out Node node)) {
+                nodeGroup.Nodes.Add(node);
+                node.NodeGroup = nodeGroup;
+            }
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -30,26 +48,30 @@ public class IslandNode : MonoBehaviour
         if (!transform.TryGetComponent(out GravitySimulator gs))
         {
             transform.AddComponent<GravitySimulator>();
+            
         }
     }
 
     private void SetPositionAVGChildPosition()
     {
+        Vector3 vectorMinY = new Vector3(0, int.MaxValue, 0);
         // Lưu vị trí thế giới ban đầu của đối tượng A
         Vector3 originalPosition = transform.position;
 
         // Tính toán vị trí trung bình của các đối tượng con trong không gian thế giới
-        Vector3 averagePosition = Vector3.zero;
         foreach (Transform child in transform)
         {
-            averagePosition += child.position;
+            if(child.position.y < vectorMinY.y)
+            {
+                vectorMinY = child.position;
+            }
         }
-        averagePosition /= transform.childCount;
+
 
         // Di chuyển đối tượng A sao cho pivot mới nằm giữa các con
-        Vector3 offset = originalPosition - averagePosition;
-        transform.position = averagePosition;  // Cập nhật vị trí mới của A
+        Vector3 offset = originalPosition - vectorMinY;
 
+        transform.position = vectorMinY;
         // Đảm bảo các đối tượng con không bị thay đổi vị trí trong thế giới
         foreach (Transform child in transform)
         {

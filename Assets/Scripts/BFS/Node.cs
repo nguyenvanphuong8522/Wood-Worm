@@ -9,6 +9,21 @@ public class Node : MonoBehaviour
 
     public List<Node> neighbors = new List<Node>();
 
+    private NodeGroup nodeGroup;
+
+    
+    public NodeGroup NodeGroup
+    {
+        get
+        {
+            return nodeGroup;
+        }
+        set
+        {
+            nodeGroup = value;
+        }
+    }
+
     private void OnMouseDown()
     {
         DestroyCell();

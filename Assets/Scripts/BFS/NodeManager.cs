@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Sirenix.OdinInspector;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class NodeManager : MonoBehaviour
 {
+    #region Init Node
+    public int indexColumn;
     public Dictionary<Vector2Int, Node> dictionaryNode;
     //Danh sách tất cả node.
     public List<Node> listOfNode;
@@ -120,7 +124,6 @@ public class NodeManager : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// Hàm này cập nhật lại vị trí của node hiện tại.
     /// </summary>
@@ -134,59 +137,99 @@ public class NodeManager : MonoBehaviour
             }
         }
     }
+#endregion
 
-    //Hàm này lấy danh sách những key nằm trên một cột.
-    private List<Vector2Int> GetNodeHasCol(int col)
+
+
+
+
+    //Hàm này sẽ tìm ra vị trí thấp nhất mà island có thể di chuyển xuống.
+    public int GetYMinOfIsland(NodeGroup nodeGroup)
     {
-        List<Vector2Int> listOfKey = new List<Vector2Int>();
-        foreach (Vector2Int key in dictionaryNode.Keys)
+        return 0;
+    }
+
+    //Hàm này lấy ra danh sách các node trên một cột trong một island.
+    public List<Node> GetNodesInColumn(int indexColumn, NodeGroup nodeGroup)
+    {
+        List<Node> nodesOfColumn = new List<Node>();
+
+        foreach (Node node in nodeGroup.Nodes)
         {
-            if (key.y == col)
+            if(node.pos.y == indexColumn)
             {
-                listOfKey.Add(key);
+                nodesOfColumn.Add(node);
             }
         }
-        return listOfKey;
+        return nodesOfColumn;
     }
 
 
-    //Hàm này tìm node có vị trí thấp nhất trong cột.
-    private Vector2Int GetKeyMin(int col)
+    //Hàm này lấy ra danh sách các node trên một cột toàn bộ node hiện có.
+    public List<Node> GetNodesInColumnAll(int indexColumn)
     {
-        List<Vector2Int> listOfKey = GetNodeHasCol(col);
+        List<Node> nodesOfColumn = new List<Node>();
 
-        int min = int.MaxValue;
-
-        for (int i = 0; i < listOfKey.Count; i++)
+        foreach(Vector2Int key in GameManager.Instance.nodeManager.dictionaryNode.Keys)
         {
-            if (listOfKey[i].x < min)
+            if (key.y == indexColumn)
             {
-                min = listOfKey[i].x;
+                nodesOfColumn.Add(GameManager.Instance.nodeManager.dictionaryNode[key]);
             }
         }
-        Vector2Int keyNeedFind = new Vector2Int(min, col);
-        return keyNeedFind;
+
+        return nodesOfColumn;
     }
 
-    //[Button(ButtonSizes.Gigantic)]
-    public void Test(Node node)
-    {
-        Debug.Log(GetYMin(node.pos));
-    }
 
-    //Hàm này lấy ra giá trị thấp nhất mà node tại key này có thể di chuyển xuống.
-    private float GetYMin(Vector2Int key)
+    [Button(ButtonSizes.Gigantic)]
+    public int GetYMinOfNodeGroup(IslandNode islandNode)
     {
-        //Đây là key có y thấp nhất tại cột này.
-        Vector2Int min = GetKeyMin(key.y);
-        //Nếu key là key thấp nhất.
-        if(key == min)
+        int maxY = int.MinValue;
+        foreach(Node node in islandNode.nodeGroup.Nodes)
         {
+            int curY = GetYMinOfNode(node, islandNode);
+            if (curY > maxY)
+            {
+                maxY = curY;
+            }
+        }
+        return maxY;
+    }
+
+    
+    //Hàm này tìm ra giá trị thấp nhất mà node có thể di chuyển xuống.
+    public int GetYMinOfNode(Node node, IslandNode nodeGroup)
+    {
+        //Nếu đang ở dưới cùng.
+        if(node.pos.x == 0)
+        {
+            Debug.Log(0);
             return 0;
         }
         else
         {
-            return min.y;
+            //Index cột của node này.
+            int col = node.pos.y;
+
+            for(int i = node.pos.x - 1; i >= 0; i--)
+            {
+                Vector2Int key = new Vector2Int(i, col);
+                if (dictionaryNode.TryGetValue(key, out Node nodeFinded))
+                {
+                    if(nodeGroup.nodeGroup.Nodes.Contains(nodeFinded))
+                    {
+                        Debug.Log(-1);
+                        return -1;
+                    }
+                    else
+                    {
+                        Debug.Log(nodeFinded.pos.x);
+                        return nodeFinded.pos.x + 1;
+                    }
+                }
+            }
+            return 0;
         }
     }
 }
