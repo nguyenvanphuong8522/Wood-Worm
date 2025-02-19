@@ -10,7 +10,14 @@ public class Node : MonoBehaviour
     public List<Node> neighbors = new List<Node>();
 
     private NodeGroup nodeGroup;
+    [SerializeField]
+    private int yMin;
 
+    public int YMin
+    {
+        get => yMin;
+        set => yMin = value;
+    }
     
     public NodeGroup NodeGroup
     {

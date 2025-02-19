@@ -1,5 +1,6 @@
 ﻿using Sirenix.OdinInspector;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -137,7 +138,7 @@ public class NodeManager : MonoBehaviour
             }
         }
     }
-#endregion
+    #endregion
 
 
 
@@ -156,7 +157,7 @@ public class NodeManager : MonoBehaviour
 
         foreach (Node node in nodeGroup.Nodes)
         {
-            if(node.pos.y == indexColumn)
+            if (node.pos.y == indexColumn)
             {
                 nodesOfColumn.Add(node);
             }
@@ -170,7 +171,7 @@ public class NodeManager : MonoBehaviour
     {
         List<Node> nodesOfColumn = new List<Node>();
 
-        foreach(Vector2Int key in GameManager.Instance.nodeManager.dictionaryNode.Keys)
+        foreach (Vector2Int key in GameManager.Instance.nodeManager.dictionaryNode.Keys)
         {
             if (key.y == indexColumn)
             {
@@ -185,26 +186,33 @@ public class NodeManager : MonoBehaviour
     [Button(ButtonSizes.Gigantic)]
     public int GetYMinOfNodeGroup(IslandNode islandNode)
     {
-        int maxY = int.MinValue;
-        foreach(Node node in islandNode.nodeGroup.Nodes)
+        int minDistance = int.MaxValue;
+        foreach (Node node in islandNode.nodeGroup.Nodes)
         {
-            int curY = GetYMinOfNode(node, islandNode);
-            if (curY > maxY)
+            int distance = GetDistanceYMinOfNode(node, islandNode);
+            node.YMin = node.pos.x - distance;
+            if (distance == 8522)
             {
-                maxY = curY;
+                continue;
+            }
+            if(distance < minDistance)
+            {
+                minDistance = distance;
             }
         }
-        return maxY;
+
+        
+        return minDistance;
     }
 
-    
+
     //Hàm này tìm ra giá trị thấp nhất mà node có thể di chuyển xuống.
-    public int GetYMinOfNode(Node node, IslandNode nodeGroup)
+    public int GetDistanceYMinOfNode(Node node, IslandNode nodeGroup)
     {
         //Nếu đang ở dưới cùng.
-        if(node.pos.x == 0)
+        if (node.pos.x == 0)
         {
-            Debug.Log(0);
+            node.YMin = 0;
             return 0;
         }
         else
@@ -212,24 +220,27 @@ public class NodeManager : MonoBehaviour
             //Index cột của node này.
             int col = node.pos.y;
 
-            for(int i = node.pos.x - 1; i >= 0; i--)
+            for (int i = node.pos.x - 1; i >= 0; i--)
             {
                 Vector2Int key = new Vector2Int(i, col);
                 if (dictionaryNode.TryGetValue(key, out Node nodeFinded))
                 {
-                    if(nodeGroup.nodeGroup.Nodes.Contains(nodeFinded))
+                    if (nodeGroup.nodeGroup.Nodes.Contains(nodeFinded))
                     {
-                        Debug.Log(-1);
-                        return -1;
+                        //node.YMin = -1;
+                        return 8522;
                     }
                     else
                     {
-                        Debug.Log(nodeFinded.pos.x);
-                        return nodeFinded.pos.x + 1;
+
+                        int tmp = node.pos.x - nodeFinded.pos.x;
+                        return --tmp;
+
                     }
                 }
             }
-            return 0;
+            //node.YMin = 0;
+            return node.pos.x;
         }
     }
 }

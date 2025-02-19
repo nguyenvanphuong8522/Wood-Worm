@@ -37,6 +37,8 @@ public class GravitySimulator : MonoBehaviour
 
     public void StartFall()
     {
+        YMin = Mathf.RoundToInt(transform.position.y) - YMin;
+
         if (_coroutine != null)
         {
             StopCoroutine(_coroutine);
