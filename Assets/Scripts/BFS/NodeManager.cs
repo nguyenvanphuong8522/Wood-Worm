@@ -144,44 +144,6 @@ public class NodeManager : MonoBehaviour
 
 
 
-    //Hàm này sẽ tìm ra vị trí thấp nhất mà island có thể di chuyển xuống.
-    public int GetYMinOfIsland(NodeGroup nodeGroup)
-    {
-        return 0;
-    }
-
-    //Hàm này lấy ra danh sách các node trên một cột trong một island.
-    public List<Node> GetNodesInColumn(int indexColumn, NodeGroup nodeGroup)
-    {
-        List<Node> nodesOfColumn = new List<Node>();
-
-        foreach (Node node in nodeGroup.Nodes)
-        {
-            if (node.pos.y == indexColumn)
-            {
-                nodesOfColumn.Add(node);
-            }
-        }
-        return nodesOfColumn;
-    }
-
-
-    //Hàm này lấy ra danh sách các node trên một cột toàn bộ node hiện có.
-    public List<Node> GetNodesInColumnAll(int indexColumn)
-    {
-        List<Node> nodesOfColumn = new List<Node>();
-
-        foreach (Vector2Int key in GameManager.Instance.nodeManager.dictionaryNode.Keys)
-        {
-            if (key.y == indexColumn)
-            {
-                nodesOfColumn.Add(GameManager.Instance.nodeManager.dictionaryNode[key]);
-            }
-        }
-
-        return nodesOfColumn;
-    }
-
 
     [Button(ButtonSizes.Gigantic)]
     public int GetYMinOfNodeGroup(IslandNode islandNode)
@@ -190,7 +152,6 @@ public class NodeManager : MonoBehaviour
         foreach (Node node in islandNode.nodeGroup.Nodes)
         {
             int distance = GetDistanceYMinOfNode(node, islandNode);
-            node.YMin = node.pos.x - distance;
             if (distance == 8522)
             {
                 continue;
@@ -199,6 +160,7 @@ public class NodeManager : MonoBehaviour
             {
                 minDistance = distance;
             }
+            node.YMin = node.pos.x - distance;
         }
 
         

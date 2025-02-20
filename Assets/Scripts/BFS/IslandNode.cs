@@ -33,22 +33,12 @@ public class IslandNode : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(transform.position.y < collision.transform.position.y)
-        {
-            Debug.Log("colli");
-        }
-    }
-
-
     private void AddGravity()
     {
         //Nếu chưa có component GravitySimulator.
         if (!transform.TryGetComponent(out GravitySimulator gs))
         {
             transform.AddComponent<GravitySimulator>();
-            
         }
     }
 
@@ -66,8 +56,6 @@ public class IslandNode : MonoBehaviour
                 vectorMinY = child.position;
             }
         }
-
-
         // Di chuyển đối tượng A sao cho pivot mới nằm giữa các con
         Vector3 offset = originalPosition - vectorMinY;
 
@@ -77,14 +65,5 @@ public class IslandNode : MonoBehaviour
         {
             child.position += offset;  // Điều chỉnh các con về lại vị trí thế giới ban đầu
         }
-    }
-
-    /// <summary>
-    /// Hàm này tìm vị trí thấp nhất có thể di chuyển xuống.
-    /// </summary>
-    private float CalculatorYMin()
-    {
-
-        return 0;
     }
 }
