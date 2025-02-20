@@ -1,7 +1,5 @@
 ﻿using Sirenix.OdinInspector;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class NodeManager : MonoBehaviour
@@ -145,30 +143,34 @@ public class NodeManager : MonoBehaviour
 
 
 
+    //Hàm này trả về quãng đường mà island có thể di chuyển xuống.
     [Button(ButtonSizes.Gigantic)]
     public int GetYMinOfNodeGroup(IslandNode islandNode)
     {
         int minDistance = int.MaxValue;
         foreach (Node node in islandNode.nodeGroup.Nodes)
         {
+            //Lấy ra quãng đường của node này.
             int distance = GetDistanceYMinOfNode(node, islandNode);
             if (distance == 8522)
             {
                 continue;
             }
+            //Nếu quãng đường nhỏ hơn min.
             if(distance < minDistance)
             {
                 minDistance = distance;
             }
+            //Set điểm di chuyển thấp nhất của node.
             node.YMin = node.pos.x - distance;
         }
 
-        
+        //Trả về quãng đường ngắn nhất.
         return minDistance;
     }
 
 
-    //Hàm này tìm ra giá trị thấp nhất mà node có thể di chuyển xuống.
+    //Hàm này tìm ra quãng đường mà node có thể di chuyển xuống.
     public int GetDistanceYMinOfNode(Node node, IslandNode nodeGroup)
     {
         //Nếu đang ở dưới cùng.
@@ -181,27 +183,25 @@ public class NodeManager : MonoBehaviour
         {
             //Index cột của node này.
             int col = node.pos.y;
-
+            //Duyệt các node ở bên dưới node này.
             for (int i = node.pos.x - 1; i >= 0; i--)
             {
                 Vector2Int key = new Vector2Int(i, col);
                 if (dictionaryNode.TryGetValue(key, out Node nodeFinded))
                 {
+                    //Nếu node tìm thấy nằm trong cùng một island thì thôi.
                     if (nodeGroup.nodeGroup.Nodes.Contains(nodeFinded))
                     {
-                        //node.YMin = -1;
                         return 8522;
                     }
+                    //Nếu node tìm thấy là node ở island khác.
                     else
                     {
-
-                        int tmp = node.pos.x - nodeFinded.pos.x;
-                        return --tmp;
-
+                        return node.pos.x - nodeFinded.pos.x - 1;
                     }
                 }
             }
-            //node.YMin = 0;
+            //Nếu dưới node này không có node nào.
             return node.pos.x;
         }
     }
