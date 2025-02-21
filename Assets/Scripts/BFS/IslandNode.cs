@@ -14,9 +14,10 @@ public class IslandNode : MonoBehaviour
     public void Init()
     {
         SetPositionAVGChildPosition();
-        AddGravity();
         InitNodeGroup();
+        //GameManager.Instance.nodeManager.FindYMinAllCell();
         int yMin = GameManager.Instance.nodeManager.GetYMinOfNodeGroup(this);
+        AddGravity();
         GetComponent<GravitySimulator>().YMin = yMin;
         GetComponent<GravitySimulator>().StartFall();
     }

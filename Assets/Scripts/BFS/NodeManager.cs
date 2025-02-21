@@ -157,7 +157,7 @@ public class NodeManager : MonoBehaviour
                 continue;
             }
             //Nếu quãng đường nhỏ hơn min.
-            if(distance < minDistance)
+            if (distance < minDistance)
             {
                 minDistance = distance;
             }
@@ -192,17 +192,98 @@ public class NodeManager : MonoBehaviour
                     //Nếu node tìm thấy nằm trong cùng một island thì thôi.
                     if (nodeGroup.nodeGroup.Nodes.Contains(nodeFinded))
                     {
+                        node.YMin = 8522;
                         return 8522;
                     }
                     //Nếu node tìm thấy là node ở island khác.
                     else
                     {
-                        return node.pos.x - nodeFinded.pos.x - 1;
+                        int distance = node.pos.x - nodeFinded.pos.x - 1;
+                        node.YMin = node.pos.x - distance;
+                        return distance;
                     }
                 }
             }
             //Nếu dưới node này không có node nào.
+            node.YMin = 0;
             return node.pos.x;
         }
     }
+
+    //Hàm này tìm ra quãng đường mà node có thể di chuyển xuống.
+    public int GetDistanceYMinOfNode(Node node, NodeGroup nodeGroup)
+    {
+        //Nếu đang ở dưới cùng.
+        if (node.pos.x == 0)
+        {
+            node.YMin = 0;
+            return 0;
+        }
+        else
+        {
+            //Index cột của node này.
+            int col = node.pos.y;
+            //Duyệt các node ở bên dưới node này.
+            for (int i = node.pos.x - 1; i >= 0; i--)
+            {
+                Vector2Int key = new Vector2Int(i, col);
+                if (dictionaryNode.TryGetValue(key, out Node nodeFinded))
+                {
+                    //Nếu node tìm thấy nằm trong cùng một island thì thôi.
+                    if (nodeGroup.Nodes.Contains(nodeFinded))
+                    {
+                        node.YMin = 8522;
+                        return 8522;
+                    }
+                    //Nếu node tìm thấy là node ở island khác.
+                    else
+                    {
+                        int distance = node.pos.x - nodeFinded.YMin - 1;
+                        node.YMin = node.pos.x - distance;
+                        return distance;
+                    }
+                }
+            }
+            //Nếu dưới node này không có node nào.
+            node.YMin = 0;
+            return node.pos.x;
+        }
+    }
+        [Button]
+    //Hàm này tìm y min của tất cả cell.
+    private void FindYMinAllCell()
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            FindYMinColumn(i);
+        }
+    }
+
+
+    //Hàm này tìm Y min của tất cả các node trong một cột
+    private void FindYMinColumn(int indexColumn)
+    {
+        List<Node> nodeOfColumn = GetNodeInColumn(indexColumn);
+        foreach(Node node in nodeOfColumn)
+        {
+            int distance = GetDistanceYMinOfNode(node, node.NodeGroup);
+        }
+    }
+
+    [Button(ButtonSizes.Gigantic)]
+    //Hàm này lấy ra tất cả các node trong một column.
+    private List<Node> GetNodeInColumn(int index)
+    {
+        List<Node> nodesOfColumn = new List<Node>();
+        foreach (Node node in dictionaryNode.Values)
+        {
+            if(node.pos.y == index)
+            {
+                nodesOfColumn.Add(node);
+            }
+        }
+        nodesOfColumn.Sort((a, b) => a.pos.x.CompareTo(b.pos.x));
+        return nodesOfColumn;
+    }
+
 }
