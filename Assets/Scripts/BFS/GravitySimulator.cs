@@ -7,8 +7,6 @@ public class GravitySimulator : MonoBehaviour
     #region Define
     private const float _gravity = -9.8f;
 
-    private Coroutine _coroutine;
-
     private Vector2 _velocity;
     #endregion
 
@@ -16,8 +14,8 @@ public class GravitySimulator : MonoBehaviour
     /// <summary>
     /// Giá trị thấp nhất có thể rơi xuống.
     /// </summary>
-    [SerializeField]    
-    
+    [SerializeField]
+
     private int _yMin;
     public int YMin
     {
@@ -32,39 +30,32 @@ public class GravitySimulator : MonoBehaviour
     }
     #endregion
 
-
-    //[Button(ButtonSizes.Gigantic)]
-
-    public void StartFall()
+    private void Update()
     {
-        YMin = Mathf.RoundToInt(transform.position.y) - YMin;
-
-        if (_coroutine != null)
-        {
-            StopCoroutine(_coroutine);
-        }
-        _velocity = Vector2.zero;
-        _coroutine = StartCoroutine(FallCoroutine());
+        FallCoroutine();
     }
 
-    private IEnumerator FallCoroutine()
+    private void FallCoroutine()
     {
         // Tiếp tục di chuyển xuống cho đến khi đạt y <= 0
-        while (true)
+
+        Vector3 currentPosition = Fall();
+
+
+        if (transform.position.y > _yMin)
         {
-            Vector3 currentPosition = Fall();
-            if (currentPosition.y <= _yMin)
-            {
-                currentPosition.y = _yMin;
-                transform.position = currentPosition;
-                if (_coroutine != null)
-                {
-                    StopCoroutine(_coroutine);
-                }
-            }
-            transform.position = currentPosition;
-            yield return null;
+            transform.position = Fall(); ;
         }
+        else
+        {
+            _velocity = Vector2.zero;
+
+            currentPosition.y = _yMin;
+
+            transform.position = currentPosition;
+
+        }
+
     }
 
     /// <summary>
@@ -76,6 +67,4 @@ public class GravitySimulator : MonoBehaviour
         Vector3 currentPosition = transform.position + (Vector3)_velocity * Time.deltaTime;
         return currentPosition;
     }
-
-
 }
