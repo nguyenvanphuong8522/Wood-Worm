@@ -141,12 +141,10 @@ public class NodeManager : MonoBehaviour
 
 
 
-
-
     //Hàm này tìm y min của tất cả cell.
     public void FindYMinAllCell()
     {
-        for(int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             FindYMinColumn(i);
         }
@@ -157,7 +155,7 @@ public class NodeManager : MonoBehaviour
     private void FindYMinColumn(int indexColumn)
     {
         List<Node> nodeOfColumn = GetNodeInColumn(indexColumn);
-        foreach(Node node in nodeOfColumn)
+        foreach (Node node in nodeOfColumn)
         {
         }
     }
@@ -169,13 +167,36 @@ public class NodeManager : MonoBehaviour
         List<Node> nodesOfColumn = new List<Node>();
         foreach (Node node in dictionaryNode.Values)
         {
-            if(node.pos.y == index)
+            if (node.pos.y == index)
             {
                 nodesOfColumn.Add(node);
             }
         }
-        nodesOfColumn.Sort((a, b) => a.pos.x.CompareTo(b.pos.x));
         return nodesOfColumn;
+    }
+
+    //Hàm này tìm ra vị trí thấp nhất mà node này có thể di chuyển xuống.
+    private int GetYMin(Node node)
+    {
+        //Đây là cột của node này.
+        int indexColumn = node.pos.y;
+        //Đây là hàng mà node này đang đứng.
+        int indexRow = node.pos.x;
+        //Lấy ra tất cả những node trong cột này.
+        List<Node> nodesOfColumn = GetNodeInColumn(indexColumn);
+
+        //Chỉ duyệt những node bên nằm bên dưới node này và nằm trong cột này.
+        for (int i = indexRow - 1; i >= 0; i--)
+        {
+            Vector2Int key = new Vector2Int(i, indexColumn);
+
+            //Nếu tồn tại key này
+            if (dictionaryNode.ContainsKey(key))
+            {
+                return i + 1;
+            }
+        }
+        return 0;
     }
 
 }
