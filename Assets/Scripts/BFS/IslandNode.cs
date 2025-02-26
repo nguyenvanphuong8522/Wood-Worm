@@ -62,4 +62,40 @@ public class IslandNode : MonoBehaviour
             child.position += offset;  // Điều chỉnh các con về lại vị trí thế giới ban đầu
         }
     }
+
+
+    /// <summary>
+    /// Hàm này sẽ di chuyển island
+    /// step là số bước mà island có thể di chuyển xuống.
+    /// </summary>
+    /// <param name="step"></param>    
+    private void MoveIsland(int step)
+    {
+        transform.position += Vector3.down * step;
+    }
+
+
+    /// <summary>
+    /// Hàm này sẽ tìm ra số step mà island này có thể di chuyển.
+    /// </summary>
+    /// <returns></returns>
+    private int GetStepMove()
+    {
+        return 0;
+    }
+
+    //Hàm này lấy ra tất cả các node trong một column.
+    private List<Node> GetNodeInColumn(int index)
+    {
+        List<Node> nodesOfColumn = new List<Node>();
+        foreach (Node node in nodeGroup.Nodes)
+        {
+            if (node.pos.y == index)
+            {
+                nodesOfColumn.Add(node);
+            }
+        }
+        nodesOfColumn.Sort((a, b) => a.pos.x.CompareTo(b.pos.x));
+        return nodesOfColumn;
+    }
 }

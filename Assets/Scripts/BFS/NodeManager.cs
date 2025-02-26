@@ -172,6 +172,7 @@ public class NodeManager : MonoBehaviour
                 nodesOfColumn.Add(node);
             }
         }
+        nodesOfColumn.Sort((a, b) => a.pos.x.CompareTo(b.pos.x));
         return nodesOfColumn;
     }
 
@@ -197,6 +198,19 @@ public class NodeManager : MonoBehaviour
             }
         }
         return 0;
+    }
+
+
+    /// <summary>
+    /// Hàm này tìm step của một node.
+    /// </summary>
+    /// <param name="node"></param>
+    /// <returns></returns>
+    private int GetStepOfNode(Node node)
+    {
+        int yMin = GetYMin(node);
+        int step = node.pos.x - yMin;
+        return step;
     }
 
 }
